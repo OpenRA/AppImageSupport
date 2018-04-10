@@ -10,12 +10,14 @@ script:
 - |
   if [ -z "${TRAVIS_TAG}" ]; then
     mkdir output
+    cp *.config output
     docker run --rm=true -e "USERID=${UID}" -v `pwd`:/src:rw centos:centos6 /bin/sh -c "cd src && ./docker-setup.sh";
     ls output;
   fi
 
 before_deploy:
 - mkdir output
+- cp *.config output
 - docker run --rm=true -e "USERID=${UID}" -v `pwd`:/src:rw centos:centos6 /bin/sh -c "cd src && ./docker-setup.sh"
 - cd output
 - tar cjf libs.tar.bz2 *
