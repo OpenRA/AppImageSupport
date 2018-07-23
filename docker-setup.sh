@@ -1,14 +1,13 @@
 #!/bin/sh
 
-# Add a default user to squash unknown user errors
-adduser --uid "${USERID}" hostuser
 
 # Install dependencies
-yum -y clean all
-yum -y clean expire-cache
-yum -y install epel-release
-yum -y install gcc gcc-c++ cmake patch openal-soft
-yum -y install readline-devel mesa-libGL-devel alsa-lib-devel libGLU-devel libXrender-devel libXrandr-devel libXcursor-devel
+apt-get update
+#apt-get -y install cmake patch
+apt-get -y install curl gcc g++ make patch libopenal1 libncurses-dev libreadline-dev libgl1-mesa-dev libglu1-mesa-dev libx11-dev libxcursor-dev libxext-dev libxi-dev libxinerama-dev libxrandr-dev libxss-dev libxt-dev
+
+# Add a default user to squash unknown user errors
+useradd --uid "${USERID}" hostuser
 
 # Run the build as the default user so that generated files aren't owned by root
 su hostuser -c "./build-libraries.sh"
