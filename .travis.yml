@@ -10,9 +10,8 @@ script:
 - |
   if [ -z "${TRAVIS_TAG}" ]; then
     mkdir output
-    cp *.config output
     docker run --rm=true -e "USERID=${UID}" -v `pwd`:/src:rw debian:7 /bin/sh -c "cd src && ./docker-setup.sh";
-    ls output;
+    find output
   fi
 
 before_deploy:
