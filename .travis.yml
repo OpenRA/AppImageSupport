@@ -17,7 +17,6 @@ script:
 
 before_deploy:
 - mkdir output
-- cp *.config output
 - docker run --rm=true -e "USERID=${UID}" -v `pwd`:/src:rw debian:7 /bin/sh -c "cd src && ./docker-setup.sh"
 - cd output
 - tar cjf libs.tar.bz2 *
