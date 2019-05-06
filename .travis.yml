@@ -1,25 +1,30 @@
-sudo: required
+dist: trusty
 
-services:
-- docker
-
-before_install:
-- docker pull debian:7
+addons:
+  apt:
+    packages:
+      - libopenal1
+      - libncurses-dev
+      - libreadline-dev
+      - libgl1-mesa-dev
+      - libglu1-mesa-dev
+      - libx11-dev
+      - libxcursor-dev
+      - libxext-dev
+      - libxi-dev
+      - libxinerama-dev
+      - libxrandr-dev
+      - libxss-dev
+      - libxt-dev
 
 script:
 - |
   if [ -z "${TRAVIS_TAG}" ]; then
-    mkdir output
-    docker run --rm=true -e "USERID=${UID}" -v `pwd`:/src:rw debian:7 /bin/sh -c "cd src && ./docker-setup.sh";
-    find output
+    ./build.sh
   fi
 
 before_deploy:
-- mkdir output
-- docker run --rm=true -e "USERID=${UID}" -v `pwd`:/src:rw debian:7 /bin/sh -c "cd src && ./docker-setup.sh"
-- cd output
-- tar cjf libs.tar.bz2 *
-- tar tf libs.tar.bz2
+- ./build.sh
 
 deploy:
   provider: releases

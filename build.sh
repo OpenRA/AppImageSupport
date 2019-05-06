@@ -1,17 +1,19 @@
 #!/bin/bash
 OUTPUT="$(pwd)/output"
+mkdir "${OUTPUT}"
 
 mkdir -p "${OUTPUT}/usr/bin"
 mkdir -p "${OUTPUT}/usr/lib"
 mkdir "${OUTPUT}/etc"
 
+# Mono 5.20.1 is copied from upstream's `mkbundle` cross-compiler backend data
+# Before updating, use `objdump -T` to confirm that the `mono` binary and support
+# libraries do not resolve any glibc symbols > 2.17, to maintain support with CentOS 7
 
-# Mono 5.10 is copied from upstream's `mkbundle` cross-compiler backend data
-# This appears to be the latest version supported on Debian 7
 mkdir mono
 pushd mono
-curl -sLO https://download.mono-project.com/runtimes/raw/mono-5.10.0-debian-7-x64
-unzip mono-5.10.0-debian-7-x64
+curl -sLO https://download.mono-project.com/runtimes/raw/mono-5.20.1-ubuntu-14.04-x64
+unzip mono-5.20.1-ubuntu-14.04-x64
 
 # Core mono files
 mkdir -p "${OUTPUT}/usr/lib/mono/4.5"
@@ -65,3 +67,8 @@ make linux
 cp src/liblua.so.5.1 "${OUTPUT}/usr/lib/liblua5.1.so.0"
 popd
 
+pushd ${OUTPUT}
+tar cjf ../libs.tar.bz2 *
+popd
+
+tar tf libs.tar.bz2
