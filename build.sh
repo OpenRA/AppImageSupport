@@ -6,14 +6,14 @@ mkdir -p "${OUTPUT}/usr/bin"
 mkdir -p "${OUTPUT}/usr/lib"
 mkdir "${OUTPUT}/etc"
 
-# Mono 5.20.1 is copied from upstream's `mkbundle` cross-compiler backend data
+# Mono 6.4.0 is copied from upstream's `mkbundle` cross-compiler backend data
 # Before updating, use `objdump -T` to confirm that the `mono` binary and support
 # libraries do not resolve any glibc symbols > 2.17, to maintain support with CentOS 7
 
 mkdir mono
 pushd mono
-curl -sLO https://download.mono-project.com/runtimes/raw/mono-5.20.1-ubuntu-14.04-x64
-unzip mono-5.20.1-ubuntu-14.04-x64
+curl -sLO https://download.mono-project.com/runtimes/raw/mono-6.4.0-ubuntu-16.04-x64
+unzip mono-6.4.0-ubuntu-16.04-x64
 
 # Core mono files
 mkdir -p "${OUTPUT}/usr/lib/mono/4.5"
@@ -36,6 +36,12 @@ cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll Syste
 popd > /dev/null
 
 cp lib/libmono-btls-shared.so "${OUTPUT}/usr/lib"
+
+# Fetch libmono-native.so from the mono 16.04 repository
+# This is not packaged in the mkbundle distribution
+curl -sLO https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb
+dpkg -x mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb .
+cp usr/lib/libmono-native.so "${OUTPUT}/usr/lib/"
 
 # Fetch cert-sync.exe from the debian stretch repo
 # This is a managed executable, so the distro doesn't matter
