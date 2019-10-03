@@ -19,7 +19,7 @@ unzip mono-5.20.1-ubuntu-14.04-x64
 mkdir -p "${OUTPUT}/usr/lib/mono/4.5"
 mkdir -p "${OUTPUT}/etc/mono/4.5"
 cp bin/mono "${OUTPUT}/usr/bin/"
-cp etc/mono/config "${OUTPUT}/etc/mono/"
+sed "s|\$mono_libdir/||g" etc/mono/config > "${OUTPUT}/etc/mono/config"
 cp etc/mono/4.5/machine.config "${OUTPUT}/etc/mono/4.5/"
 
 # Runtime dependencies
