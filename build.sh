@@ -1,4 +1,9 @@
 #!/bin/bash
+
+RUNTIME_URL="https://download.mono-project.com/runtimes/raw/mono-6.4.0-ubuntu-16.04-x64"
+DEB_URL="https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb"
+CERTSYNC_URL="https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/ca-certificates-mono_6.4.0.198-0xamarin3+ubuntu1604b1_all.deb"
+
 OUTPUT="$(pwd)/output"
 mkdir "${OUTPUT}"
 
@@ -12,8 +17,8 @@ mkdir "${OUTPUT}/etc"
 
 mkdir mono
 pushd mono
-curl -sLO https://download.mono-project.com/runtimes/raw/mono-6.4.0-ubuntu-16.04-x64
-unzip mono-6.4.0-ubuntu-16.04-x64
+curl -sLO "${RUNTIME_URL}"
+unzip $(basename "${RUNTIME_URL}")
 
 # Core mono files
 mkdir -p "${OUTPUT}/usr/lib/mono/4.5"
@@ -39,14 +44,13 @@ cp lib/libmono-btls-shared.so "${OUTPUT}/usr/lib"
 
 # Fetch libmono-native.so from the mono 16.04 repository
 # This is not packaged in the mkbundle distribution
-curl -sLO https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb
-dpkg -x mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb .
+curl -sLO "${DEB_URL}"
+dpkg -x $(basename "${DEB_URL}") .
 cp usr/lib/libmono-native.so "${OUTPUT}/usr/lib/"
 
 # Fetch cert-sync.exe from the debian stretch repo
-# This is a managed executable, so the distro doesn't matter
-curl -sLO http://ftp.us.debian.org/debian/pool/main/m/mono/ca-certificates-mono_4.6.2.7+dfsg-1_all.deb
-dpkg -x ca-certificates-mono_4.6.2.7+dfsg-1_all.deb .
+curl -sLO "${CERTSYNC_URL}"
+dpkg -x $(basename "${CERTSYNC_URL}") .
 cp usr/lib/mono/4.5/cert-sync.exe "${OUTPUT}/usr/lib/mono/4.5/"
 popd
 
