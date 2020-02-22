@@ -77,6 +77,15 @@ make linux
 cp src/liblua.so.5.1 "${OUTPUT}/usr/lib/liblua5.1.so.0"
 popd
 
+# Freetype 2.10.0 is compiled from source
+curl -sLO https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
+tar xf freetype-2.10.0.tar.bz2
+pushd freetype-2.10.0
+./configure --with-png=no --with-harfbuzz=no --with-zlib=no --with-bzip2=no --prefix "$(pwd)/output"
+make && make install
+cp output/lib/libfreetype.so.6.17.0 "${OUTPUT}/usr/lib/libfreetype.so.6"
+popd
+
 pushd ${OUTPUT}
 tar cjf ../libs.tar.bz2 *
 popd
