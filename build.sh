@@ -60,9 +60,9 @@ popd
 cp /usr/lib/x86_64-linux-gnu/libopenal.so.1 "${OUTPUT}/usr/lib/libopenal.so.1"
 
 # SDL2 is compiled from source
-curl -sLO http://www.libsdl.org/release/SDL2-2.0.10.tar.gz
-tar xf SDL2-2.0.10.tar.gz
-pushd SDL2-2.0.10
+curl -sLO http://www.libsdl.org/release/SDL2-2.0.8.tar.gz
+tar xf SDL2-2.0.8.tar.gz
+pushd SDL2-2.0.8
 ./configure --prefix "$(pwd)/output" --disable-rpath --enable-sdl-dlopen --disable-loadso  --disable-audio --enable-x11-shared --disable-video-directfb --disable-video-vulkan --disable-video-dummy --disable-power --disable-joystick --disable-haptic --disable-filesystem --disable-threads --disable-file --disable-cpuinfo --disable-input-tslib
 make && make install
 cp output/lib/libSDL2.so "${OUTPUT}/usr/lib/libSDL2-2.0.so.0"
