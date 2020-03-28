@@ -1,7 +1,9 @@
 #!/bin/bash
 
 RUNTIME_URL="https://download.mono-project.com/runtimes/raw/mono-6.4.0-ubuntu-16.04-x64"
-DEB_URL="https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb"
+RUNTIME_DEB_URL="https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/mono-runtime-common_6.4.0.198-0xamarin3+ubuntu1604b1_amd64.deb"
+DEVEL_DEB_URL="https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/mono-devel_6.4.0.198-0xamarin3+ubuntu1604b1_all.deb"
+
 CERTSYNC_URL="https://download.mono-project.com/repo/ubuntu/pool/main/m/mono/ca-certificates-mono_6.4.0.198-0xamarin3+ubuntu1604b1_all.deb"
 
 OUTPUT="$(pwd)/output"
@@ -21,7 +23,7 @@ curl -sLO "${RUNTIME_URL}"
 unzip $(basename "${RUNTIME_URL}")
 
 # Core mono files
-mkdir -p "${OUTPUT}/usr/lib/mono/4.5"
+mkdir -p "${OUTPUT}/usr/lib/mono/4.5/Facades"
 mkdir -p "${OUTPUT}/etc/mono/4.5"
 cp bin/mono "${OUTPUT}/usr/bin/"
 sed "s|\$mono_libdir/||g" etc/mono/config > "${OUTPUT}/etc/mono/config"
@@ -30,8 +32,7 @@ cp etc/mono/4.5/machine.config "${OUTPUT}/etc/mono/4.5/"
 # Runtime dependencies
 # The required files can be found by running the following in the OpenRA engine directory:
 #   cp OpenRA.Game.exe OpenRA.Game.dll # Work around a mkbundle issue where it can't see exes as deps
-#   mkbundle -o foo --simple OpenRA.Game.exe OpenRA.Platforms.Default.dll mods/*/*.dll -L "$(dirname $(which mkbundle))/../lib/mono/4.5/ -L mods/common
-# The "Assembly:" lines list the required dlls
+#   mkbundle -o foo --simple OpenRA.Game.exe OpenRA.Platforms.Default.dll mods/*/*.dll -L "$(dirname $(which mkbundle))/../lib/mono/4.5/" -L "$(dirname $(which mkbundle))/../lib/mono/4.5/Facades/" -L mods/common# The "Assembly:" lines list the required dlls
 # Note that some assemblies may reference native libraries. These can be reviewed by running
 #   monodis <assembly> | grep extern
 # and looking for extension-less names that are then mapped in etc/mono/config or names that list a .so extension directly.
@@ -44,9 +45,14 @@ cp lib/libmono-btls-shared.so "${OUTPUT}/usr/lib"
 
 # Fetch libmono-native.so from the mono 16.04 repository
 # This is not packaged in the mkbundle distribution
-curl -sLO "${DEB_URL}"
-dpkg -x $(basename "${DEB_URL}") .
+curl -sLO "${RUNTIME_DEB_URL}"
+dpkg -x $(basename "${RUNTIME_DEB_URL}") .
 cp usr/lib/libmono-native.so "${OUTPUT}/usr/lib/"
+
+# neither is netstandard.dll
+curl -sLO "${DEVEL_DEB_URL}"
+dpkg -x $(basename "${DEVEL_DEB_URL}") .
+cp usr/lib/mono/4.5/Facades/netstandard.dll "${OUTPUT}/usr/lib/mono/4.5/Facades"
 
 # Fetch cert-sync.exe from the debian stretch repo
 curl -sLO "${CERTSYNC_URL}"
