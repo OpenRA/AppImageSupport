@@ -60,6 +60,12 @@ dpkg -x $(basename "${CERTSYNC_URL}") .
 cp usr/lib/mono/4.5/cert-sync.exe "${OUTPUT}/usr/lib/mono/4.5/"
 popd
 
+pushd ${OUTPUT}
+tar cjf ../mono.tar.bz2 *
+popd
+
+rm -rf "${OUTPUT}/*"
+
 # OpenAL-soft is copied from the debian binary package
 # TODO: Work out the correct set of dependencies / build args to produce
 # a working library when compiled from source here!
