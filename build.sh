@@ -38,7 +38,7 @@ cp etc/mono/4.5/machine.config "${OUTPUT}/etc/mono/4.5/"
 # and looking for extension-less names that are then mapped in etc/mono/config or names that list a .so extension directly.
 
 pushd lib/mono/4.5 > /dev/null
-cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll System.dll System.Numerics.dll System.Security.dll System.Xml.dll "${OUTPUT}/usr/lib/mono/4.5/"
+cp Mono.Security.dll mscorlib.dll System.Configuration.dll System.Core.dll System.dll System.Numerics.dll System.Runtime.Serialization.dll System.Security.dll System.Xml.dll System.Xml.Linq.dll "${OUTPUT}/usr/lib/mono/4.5/"
 popd > /dev/null
 
 cp lib/libmono-btls-shared.so "${OUTPUT}/usr/lib"
@@ -52,7 +52,11 @@ cp usr/lib/libmono-native.so "${OUTPUT}/usr/lib/"
 # neither is netstandard.dll
 curl -sLO "${DEVEL_DEB_URL}"
 dpkg -x $(basename "${DEVEL_DEB_URL}") .
-cp usr/lib/mono/4.5/Facades/netstandard.dll "${OUTPUT}/usr/lib/mono/4.5/Facades"
+
+pushd usr/lib/mono/4.5/Facades > /dev/null
+cp Microsoft.Win32.Registry.dll netstandard.dll System.Security.AccessControl.dll System.Security.Principal.Windows.dll "${OUTPUT}/usr/lib/mono/4.5/Facades"
+popd > /dev/null
+
 
 # Fetch cert-sync.exe from the debian stretch repo
 curl -sLO "${CERTSYNC_URL}"
